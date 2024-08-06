@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeMirror 6 + Perspective</title>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@finos/perspective@2.10.1/dist/cdn/perspective.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@finos/perspective-viewer@2.10.1/dist/cdn/perspective-viewer.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@finos/perspective-viewer-datagrid@2.10.1/dist/cdn/perspective-viewer-datagrid.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@finos/perspective-viewer-d3fc@2.10.1/dist/cdn/perspective-viewer-d3fc.js"></script>
+
+  <link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@finos/perspective-viewer/dist/css/themes.css" />
+
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@finos/perspective@2.10.1/dist/cdn/perspective.cpp.wasm" as="fetch" type="application/wasm" crossorigin="anonymous" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@finos/perspective-viewer@2.10.1/dist/cdn/perspective_bg.wasm" as="fetch" type="application/wasm" crossorigin="anonymous" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/superstore-arrow/superstore.lz4.arrow" as="fetch" type="arraybuffer" crossorigin="anonymous" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@finos/perspective@2.10.1/dist/cdn/perspective.worker.js" as="fetch" type="application/javascript" crossorigin="anonymous" />
+
+  <script type="module">
+    import { worker } from "https://cdn.jsdelivr.net/npm/@finos/perspective@2.10.1/dist/cdn/perspective.js";
+
+    const WORKER = worker();
+    const REQ = fetch("https://cdn.jsdelivr.net/npm/superstore-arrow/superstore.lz4.arrow");
+
+    async function load() {
+      const resp = await REQ;
+      const arrow = await resp.arrayBuffer();
+      const el = document.getElementsByTagName("perspective-viewer")[0];
+      const table = WORKER.table(arrow);
+      el.load(table);
+      el.restore({ settings: true, plugin_config: { editable: true } });
+    }
+
+    load();
+  </script>
+
+  <style>
+    perspective-viewer {
+      width: 100%;
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="editor"></div>
+  <script src="index.js"></script>
+  <perspective-viewer editable> </perspective-viewer>
+
+</body>
+
+</html>
